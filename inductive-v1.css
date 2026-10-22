@@ -193,3 +193,7 @@
   .app .discovery__card {padding:14px 11px;}
   .app .discovery__choice {font-size:.84rem;}
 }
+
+/* Align the homepage pathway with the five inductive phases. */
+.pop-path { grid-template-columns: repeat(5, minmax(0,1fr)); }
+@media(max-width:520px){ .pop-path__step { font-size:.57rem; } }
