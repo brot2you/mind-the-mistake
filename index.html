@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Mind the Mistake!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="pop-v2.css?v=3">
 <style>
   html, body { margin: 0; padding: 0; }
   #root { min-height: 100vh; }
@@ -1686,8 +1687,24 @@ Expression courante : "by myself / by yourself..." = "tout seul, sans aide".`,
     ]
   }
 ];
+const CODE_ICONS = ["⏳", "🕰️", "⌛", "✨", "🚀", "⚡", "📰", "🧩", "🧭", "🔀", "🎯", "🧑‍🤝‍🧑", "🏆", "💬", "🔤", "✏️", "🔗", "🌦️", "🔄", "🧠", "🌍", "🪞"];
 function CodeCard({ code, onSelect }) {
-  return /* @__PURE__ */ React.createElement("button", { className: "code-card", onClick: () => onSelect(code.id) }, /* @__PURE__ */ React.createElement("span", { className: "code-card__number" }, String(code.id).padStart(2, "0")), /* @__PURE__ */ React.createElement("span", { className: "code-card__text" }, /* @__PURE__ */ React.createElement("span", { className: "code-card__title" }, code.title), /* @__PURE__ */ React.createElement("span", { className: "code-card__summary" }, code.summary)));
+  const h = React.createElement;
+  return h("button", { className: "code-card", type: "button", onClick: () => onSelect(code.id),
+    "aria-label": "Code " + code.id + " : " + code.title },
+    h("span", { className: "code-card__top" },
+      h("span", { className: "code-card__number" }, String(code.id).padStart(2, "0")),
+      h("span", { className: "code-card__icon", "aria-hidden": "true" }, CODE_ICONS[(code.id - 1) % CODE_ICONS.length])
+    ),
+    h("span", { className: "code-card__text" },
+      h("span", { className: "code-card__title" }, code.title),
+      h("span", { className: "code-card__summary" }, code.summary)
+    ),
+    h("span", { className: "code-card__bottom" },
+      h("span", null, "Voir la fiche"),
+      h("span", { className: "code-card__arrow", "aria-hidden": "true" }, "➜")
+    )
+  );
 }
 function Quiz({ quiz }) {
   const [current, setCurrent] = useState(0);
@@ -1860,9 +1877,100 @@ function FontLoader() {
   return null;
 }
 function App() {
+  const h = React.createElement;
   const [selectedId, setSelectedId] = useState(null);
+  const [entry, setEntry] = useState("");
+  const [entryError, setEntryError] = useState("");
+  const [filter, setFilter] = useState("");
   const selectedCode = CODES.find((c) => c.id === selectedId);
-  return /* @__PURE__ */ React.createElement("div", { className: "app" }, /* @__PURE__ */ React.createElement("style", null, STYLES), /* @__PURE__ */ React.createElement(FontLoader, null), /* @__PURE__ */ React.createElement("header", { className: "header" }, /* @__PURE__ */ React.createElement("div", { className: "header__inner" }, /* @__PURE__ */ React.createElement("img", { className: "logo", src: LOGO_SRC, alt: "Logo BROT2YOU" }), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h1", { className: "header__title" }, "Mind the Mistake!"), /* @__PURE__ */ React.createElement("p", { className: "header__subtitle" }, "Anglais \u2014 entra\xEEne-toi sur le num\xE9ro not\xE9 dans la marge de ta copie")))), /* @__PURE__ */ React.createElement("main", { className: "main" }, !selectedCode ? /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("p", { className: "intro" }, "Trouve sur ta copie le num\xE9ro \xE9crit en marge par ton professeur, puis clique sur la fiche correspondante pour revoir la r\xE8gle et t'entra\xEEner."), /* @__PURE__ */ React.createElement("div", { className: "grid" }, CODES.map((code) => /* @__PURE__ */ React.createElement(CodeCard, { key: code.id, code, onSelect: setSelectedId })))) : /* @__PURE__ */ React.createElement(CodeDetail, { code: selectedCode, onBack: () => setSelectedId(null) })), /* @__PURE__ */ React.createElement("footer", { className: "footer" }, "Fiches de correction \u2014 Anglais"));
+  function openCode(id) {
+    setSelectedId(id);
+    setEntryError("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  function goToCode() {
+    const n = Number(entry.trim());
+    if (entry.trim() && Number.isInteger(n) && CODES.some((c) => c.id === n)) {
+      openCode(n);
+    } else {
+      setEntryError("Entre un numéro de code entre 1 et 22.");
+    }
+  }
+  function backHome() {
+    setSelectedId(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const filtered = CODES.filter(c => norm(c.title + " " + c.summary + " " + c.id).includes(norm(filter.trim())));
+  const steps = [["🔎", "Repère l'erreur"], ["💡", "Comprends"], ["✏️", "Corrige"], ["🌟", "Progresse"]];
+  return h("div", { className: "app" },
+    h("style", null, STYLES),
+    h(FontLoader, null),
+    h("header", { className: "header" + (selectedCode ? " header--compact" : "") },
+      h("div", { className: "header__inner" },
+        h("div", { className: "brand" },
+          h("img", { className: "logo", src: LOGO_SRC, alt: "Logo Brot2You" }),
+          h("div", null,
+            h("div", { className: "brand__name" }, "Mind the Mistake!"),
+            h("p", { className: "brand__tagline" }, "by Brot2You · English")
+          )
+        ),
+        h("div", { className: "header__mini" }, h("strong", null, "22"), " codes à explorer ", h("span", { "aria-hidden": "true" }, "✦"))
+      ),
+      !selectedCode && h("div", { className: "hero" },
+        h("div", { className: "hero__copy" },
+          h("div", { className: "hero__eyebrow" }, "✦ Ton mini-labo d'anglais"),
+          h("h1", { className: "hero__title" }, "Mind the", h("br"), h("span", null, "Mistake!")),
+          h("p", { className: "hero__subtitle" }, "Une erreur dans ta copie ? ", h("strong", null, "Trouve son numéro, découvre la règle et entraîne-toi à la corriger !")),
+          h("div", { className: "hero__search" },
+            h("span", { className: "hero__search-icon", "aria-hidden": "true" }, "🔎"),
+            h("input", { className: "hero__input", type: "number", min: 1, max: 22,
+              inputMode: "numeric", value: entry, placeholder: "Numéro sur ta copie (1–22)",
+              "aria-label": "Numéro du code inscrit sur la copie",
+              onChange: (e) => {setEntry(e.target.value); setEntryError("");},
+              onKeyDown: (e) => { if (e.key === "Enter") goToCode(); }
+            }),
+            h("button", { className: "hero__go", type: "button", onClick: goToCode }, "C'est parti ➜")
+          ),
+          entryError && h("p", { className: "hero__error", role: "alert" }, entryError),
+          h("p", { className: "hero__hint" }, "Ou choisis ta fiche parmi les ", h("span", null, "22 codes"), " ci-dessous ↓")
+        ),
+        h("div", { className: "hero__art" },
+          h("img", { className: "hero__mascot", src: "assets/pop-mascot.svg", alt: "Mascotte chibi enthousiaste tenant un crayon" }),
+          h("span", { className: "hero__bubble" }, "Let's fix it!")
+        )
+      ),
+      !selectedCode && h("div", { className: "pop-path", "aria-label": "Les étapes de correction" },
+        steps.map((item, i) => h("div", { className: "pop-path__step", key: i },
+          h("b", { "aria-hidden": "true" }, item[0]), item[1]))
+      )
+    ),
+    h("main", { className: "main" },
+      !selectedCode ? h(React.Fragment, null,
+        h("section", { className: "catalog", "aria-label": "Les 22 codes de correction" },
+          h("div", { className: "catalog__heading" },
+            h("div", null,
+              h("p", { className: "catalog__eyebrow" }, "Explore · Comprends · Réussis"),
+              h("h2", { className: "catalog__title" }, "Choisis ton ", h("em", null, "code d'erreur"))
+            ),
+            h("span", { className: "catalog__count" }, "📚 ", filtered.length, " / 22 fiches")
+          ),
+          h("div", { className: "catalog__filter" },
+            h("label", { className: "catalog__filter-label" }, "🔍 ",
+              h("input", { type: "search", value: filter,
+                placeholder: "Rechercher un code ou une règle...",
+                "aria-label": "Rechercher parmi les codes et les règles",
+                onChange: (e) => setFilter(e.target.value) })
+            )
+          ),
+          filtered.length
+            ? h("div", { className: "grid" }, filtered.map(code => h(CodeCard, { key: code.id, code, onSelect: openCode })))
+            : h("p", { className: "catalog__empty" }, "Aucun code trouvé. Essaie un autre numéro ou un autre mot.")
+        )
+      ) : h(CodeDetail, { code: selectedCode, onBack: backHome, key: selectedCode.id })
+    ),
+    h("footer", { className: "footer" }, "Mind the Mistake! · Fiches de correction d'anglais · Brot2You ✦")
+  );
 }
 const STYLES = `
 :root {
