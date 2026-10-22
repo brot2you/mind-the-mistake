@@ -526,3 +526,71 @@ body { background: #eaf7ff; }
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after {animation-duration:.01ms !important;animation-iteration-count:1 !important;scroll-behavior:auto !important;transition-duration:.01ms !important;}
 }
+
+/* --- V3 · Soft matte palette / confort visuel --- */
+/* A gentle blue-grey canvas and warm ivory surfaces reduce large bright-white
+   areas without changing DA 3, illustration, accent colours or any functionality. */
+body { background: #e7eceb; }
+
+.app.app {
+  --paper: #e7eceb;
+  --card-bg: #f2f2ed;
+  --highlight: #f2ebd5;
+  --border: #d3dfe2;
+  background:
+    radial-gradient(ellipse at 3% 5%, rgba(194,223,226,.43) 0, transparent 29%),
+    radial-gradient(ellipse at 95% 70%, rgba(218,211,231,.28) 0, transparent 32%),
+    linear-gradient(180deg, #dae6e8 0px, #e6eceb 560px, #edf0eb 1300px);
+}
+
+.app .header {
+  background: linear-gradient(120deg, #c9e3e7 0%, #d5e4e5 50%, #e4e2eb 100%);
+  box-shadow: inset 0 -4px 0 rgba(247,246,240,.45);
+}
+.app .header--compact {
+  background: linear-gradient(110deg, #d6e6e8, #e5e4ed);
+}
+.header__mini, .hero__eyebrow, .hero__search, .hero__bubble,
+.catalog__count, .catalog__filter-label {
+  background: #f3f3ee;
+  border-color: #dce6e8;
+}
+.hero__bubble::after { background: #f3f3ee; }
+.app .code-card {
+  background: linear-gradient(140deg,#f4f3ee 0%,#f0f1ed 60%,var(--card-tint) 100%);
+  border-color: #dbe4e8;
+  box-shadow: 0 6px 0 #d2dfe3, 0 12px 24px rgba(38,77,112,.06);
+}
+.app .detail {
+  background: #f3f3ef;
+  border-color: #d8e2e6;
+  box-shadow: 0 12px 0 #d5e1e5, 0 26px 45px rgba(31,70,106,.07);
+}
+.app .detail__header {
+  background: linear-gradient(105deg,#dceaf0,#e8e7f1);
+  border-color: #d0e0e7;
+}
+.app .tabs__btn { background: #e9eff1; border-color: #d9e3e9; }
+.app .tabs__btn:hover { background: #dce9ee; }
+.app .tabs__btn--active,
+.app .tabs__btn--active:hover {
+  background: linear-gradient(110deg,#278cf8,#695bea);
+  color: #fff;
+}
+.app .rule-box {
+  background: linear-gradient(110deg,#f4eedf,#efe8cd);
+  border-color: #e4d6a7; border-left-color: #eabf44;
+}
+.app .pitfalls { background: #f4e7eb; border-color:#e6cbd4; border-left-color:#ed6492; }
+.app .example { background: #f1f2ed; border-color:#dce4e8; box-shadow:0 5px 0 #e5eaeb; }
+.app .quiz__option { background: #ebeff0; border-color: #d6e1e6; }
+.app .quiz__option:hover:not(:disabled) { background:#dcebef; }
+.app .quiz__option--correct { background:#dceee7; }
+.app .quiz__option--wrong { background:#f0e2e7; }
+.app .quiz__feedback, .app .checker__explanation {
+  background: #e7eef0; border-color:#cadce6; border-left-color:#4b99ff;
+}
+.app .fix-prompt { background:#f3ead7; }
+.app .checker__textarea { background:#ecefee; border-color:#cbdadf; }
+.catalog__empty { background:#f2f2ec; }
+.app .footer { background:#e7eceb; border-top-color:#d7e0e3; }
