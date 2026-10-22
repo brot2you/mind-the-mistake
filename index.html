@@ -2056,7 +2056,7 @@ function App() {
   }
   const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const filtered = CODES.filter(c => norm(c.title + " " + c.summary + " " + c.id).includes(norm(filter.trim())));
-  const steps = [["🔎", "Repère l'erreur"], ["💡", "Comprends"], ["✏️", "Corrige"], ["🌟", "Progresse"]];
+  const steps = [["🔎", "Observe"], ["🧩", "Compare"], ["💡", "Déduis"], ["📖", "Retiens"], ["✏️", "Pratique"]];
   return h("div", { className: "app" },
     h("style", null, STYLES),
     h(FontLoader, null),
