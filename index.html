@@ -6,6 +6,8 @@
 <title>Mind the Mistake!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="pop-v2.css?v=4">
+<link rel="stylesheet" href="inductive-v1.css?v=1">
+<script src="inductive-v1.js?v=1"></script>
 <style>
   html, body { margin: 0; padding: 0; }
   #root { min-height: 100vh; }
@@ -1838,31 +1840,183 @@ function CorrectionExercise({ code }) {
   )), checked && /* @__PURE__ */ React.createElement("div", { className: "checker__result" }, /* @__PURE__ */ React.createElement("p", { className: "checker__status" + (isCorrect ? " checker__status--ok" : " checker__status--ko") }, isCorrect ? "\u2705 Correct !" : "\u274C Pas tout \xE0 fait."), !isCorrect && /* @__PURE__ */ React.createElement("div", { className: "examples" }, /* @__PURE__ */ React.createElement("div", { className: "example" }, /* @__PURE__ */ React.createElement("p", { className: "example__wrong" }, /* @__PURE__ */ React.createElement("span", { className: "tag tag--wrong" }, "\u2717"), " ", answer.trim()), /* @__PURE__ */ React.createElement("p", { className: "example__right" }, /* @__PURE__ */ React.createElement("span", { className: "tag tag--right" }, "\u2713"), " ", item.right))), isCorrect && /* @__PURE__ */ React.createElement("div", { className: "examples" }, /* @__PURE__ */ React.createElement("div", { className: "example" }, /* @__PURE__ */ React.createElement("p", { className: "example__right" }, /* @__PURE__ */ React.createElement("span", { className: "tag tag--right" }, "\u2713"), " ", item.right))), /* @__PURE__ */ React.createElement("p", { className: "checker__explanation" }, item.explanation), /* @__PURE__ */ React.createElement("div", { className: "checker__actions" }, /* @__PURE__ */ React.createElement("button", { className: "btn btn--primary", onClick: handleNext }, index + 1 < items.length ? "Phrase suivante" : "Voir le score"))));
 }
 function CodeDetail({ code, onBack }) {
-  const [tab, setTab] = useState("rule");
-  return /* @__PURE__ */ React.createElement("div", { className: "detail" }, /* @__PURE__ */ React.createElement("button", { className: "back-link", onClick: onBack }, "\u2190 Retour \xE0 la liste"), /* @__PURE__ */ React.createElement("div", { className: "detail__header" }, /* @__PURE__ */ React.createElement("span", { className: "detail__number" }, String(code.id).padStart(2, "0")), /* @__PURE__ */ React.createElement("h2", { className: "detail__title" }, code.title)), /* @__PURE__ */ React.createElement("div", { className: "tabs" }, /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      className: "tabs__btn" + (tab === "rule" ? " tabs__btn--active" : ""),
-      onClick: () => setTab("rule")
-    },
-    "R\xE8gle & exemples"
-  ), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      className: "tabs__btn" + (tab === "quiz" ? " tabs__btn--active" : ""),
-      onClick: () => setTab("quiz")
-    },
-    "Quiz"
-  ), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      className: "tabs__btn" + (tab === "check" ? " tabs__btn--active" : ""),
-      onClick: () => setTab("check")
-    },
-    "Corrige la phrase"
-  )), tab === "rule" && /* @__PURE__ */ React.createElement("div", { className: "detail__content" }, /* @__PURE__ */ React.createElement("div", { className: "rule-box" }, code.rule.split("\n").map(
-    (line, i) => line.trim() === "" ? /* @__PURE__ */ React.createElement("br", { key: i }) : /* @__PURE__ */ React.createElement("p", { key: i }, line)
-  )), code.pitfalls && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("h3", { className: "section-title" }, "Pi\xE8ges fr\xE9quents"), /* @__PURE__ */ React.createElement("ul", { className: "pitfalls" }, code.pitfalls.map((p, i) => /* @__PURE__ */ React.createElement("li", { key: i }, p)))), /* @__PURE__ */ React.createElement("h3", { className: "section-title" }, "Exemples"), /* @__PURE__ */ React.createElement("div", { className: "examples" }, code.examples.map((ex, i) => /* @__PURE__ */ React.createElement("div", { className: "example", key: i }, /* @__PURE__ */ React.createElement("p", { className: "example__wrong" }, /* @__PURE__ */ React.createElement("span", { className: "tag tag--wrong" }, "\u2717"), " ", ex.wrong), /* @__PURE__ */ React.createElement("p", { className: "example__right" }, /* @__PURE__ */ React.createElement("span", { className: "tag tag--right" }, "\u2713"), " ", ex.right), ex.note && /* @__PURE__ */ React.createElement("p", { className: "example__note" }, ex.note)))), /* @__PURE__ */ React.createElement("button", { className: "btn btn--primary btn--block", onClick: () => setTab("quiz") }, "Faire le quiz \u2192")), tab === "quiz" && /* @__PURE__ */ React.createElement("div", { className: "detail__content" }, /* @__PURE__ */ React.createElement(Quiz, { quiz: code.quiz, key: code.id })), tab === "check" && /* @__PURE__ */ React.createElement("div", { className: "detail__content" }, /* @__PURE__ */ React.createElement(CorrectionExercise, { code, key: code.id })));
+  const h = React.createElement;
+  const lesson = window.MTM_DISCOVERY && window.MTM_DISCOVERY[code.id];
+  const [stage, setStage] = useState("observe");
+  const [unlocked, setUnlocked] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [hypothesis, setHypothesis] = useState("");
+  const [hypothesisError, setHypothesisError] = useState("");
+  const [showObserveHint, setShowObserveHint] = useState(false);
+  const labels = [
+    ["observe", "🔎", "Observe"],
+    ["compare", "🧩", "Compare"],
+    ["hypothesis", "💡", "Déduis"],
+    ["rule", "📖", "Retiens"],
+    ["quiz", "✏️", "Entraîne-toi"]
+  ];
+  const stageRank = stage === "check" ? 4 : labels.findIndex(s => s[0] === stage);
+  const allCorrect = !!lesson && lesson.questions.every((q, i) => answers[i] === q.correct);
+  function go(target, needed) {
+    if (typeof needed === "number") setUnlocked(v => Math.max(v, needed));
+    setStage(target);
+  }
+  function selectAnswer(questionIndex, optionIndex) {
+    if (answers[questionIndex] === lesson.questions[questionIndex].correct) return;
+    setAnswers(prev => ({...prev, [questionIndex]: optionIndex}));
+  }
+  function submitHypothesis(e) {
+    e.preventDefault();
+    if (hypothesis.trim().length < 12) {
+      setHypothesisError("Écris au moins une courte phrase pour expliquer ce que tu as remarqué.");
+      return;
+    }
+    setHypothesisError("");
+    go("rule", 3);
+  }
+  if (!lesson) {
+    return h("div", {className:"detail"}, h("button", {className:"back-link",onClick:onBack}, "← Retour"),
+      h("p", null, "Cette fiche n'a pas encore son parcours de découverte. Réessaie plus tard."));
+  }
+  const backButton = h("button", {className:"back-link",type:"button",onClick:onBack}, "← Retour aux 22 codes");
+  const header = h("div", {className:"detail__header"},
+    h("span", {className:"detail__number"}, String(code.id).padStart(2,"0")),
+    h("h2", {className:"detail__title"}, code.title)
+  );
+  const introduction = h("div", {className:"discovery__intro"},
+    h("span", {className:"discovery__badge"}, "NOUVELLE MISSION · DÉCOUVERTE GUIDÉE"),
+    h("p", null, "Observe d'abord les phrases, compare-les, puis propose ta propre règle. La fiche explicative n'apparaît qu'après ta réflexion.")
+  );
+  const steps = h("nav", {className:"discovery__roadmap","aria-label":"Étapes de découverte"},
+    labels.map((item,i) => h("button", {
+      key:item[0],type:"button",
+      className:"discovery__step" + (stageRank === i ? " is-active" : "") + (unlocked > i ? " is-done" : ""),
+      disabled:unlocked < i,
+      "aria-current":stageRank === i ? "step" : undefined,
+      onClick:()=>go(item[0])
+    }, h("span", {"aria-hidden":"true"}, item[1]), item[2]))
+  );
+  let content;
+  if (stage === "observe") {
+    content = h("section", {className:"discovery__sheet","aria-labelledby":"discover-heading"},
+      h("span", {className:"discovery__topline"}, "ÉTAPE 1 · OBSERVATION"),
+      h("h3", {className:"discovery__title",id:"discover-heading"}, "Look closely! 👀"),
+      h("p", {className:"discovery__lead"}, lesson.focus),
+      h("div", {className:"discovery__examples"}, lesson.samples.map((pair,i) =>
+        h("div", {className:"discovery__pair",key:i},
+          h("span", {className:"discovery__pair-label","aria-label":"Groupe "+(i+1)},String(i+1)),
+          h("div", {className:"discovery__sentence"},pair[0]),
+          h("div", {className:"discovery__sentence"},pair[1])
+        )
+      )),
+      h("button", {type:"button",className:"discovery__button discovery__button--soft",
+        onClick:()=>setShowObserveHint(v=>!v),
+        "aria-expanded":showObserveHint}, showObserveHint ? "Masquer la piste" : "💭 Besoin d'une piste ?"),
+      showObserveHint && h("div",{className:"discovery__notice"},lesson.lookAt),
+      h("div",{className:"discovery__actions"},
+        h("button",{type:"button",className:"discovery__button",onClick:()=>go("compare",1)}, "J'ai observé : je compare →")
+      )
+    );
+  } else if (stage === "compare") {
+    const successCount = lesson.questions.filter((q,i)=>answers[i]===q.correct).length;
+    content = h("section",{className:"discovery__sheet","aria-labelledby":"compare-heading"},
+      h("span",{className:"discovery__topline"},"ÉTAPE 2 · COMPARAISON"),
+      h("h3",{className:"discovery__title",id:"compare-heading"},"What do you notice? 🧩"),
+      h("p",{className:"discovery__lead"},"Compare les exemples précédents. Réponds aux deux questions pour préparer ta propre hypothèse."),
+      h("p",{className:"discovery__progress","aria-live":"polite"},successCount," / ",lesson.questions.length," observations repérées"),
+      lesson.questions.map((q,i) => {
+        const selected = answers[i];
+        const hasSelected = selected !== undefined;
+        const correct = selected === q.correct;
+        return h("div",{className:"discovery__card",key:i},
+          h("h4",null,(i+1)+". "+q.text),
+          h("div",{className:"discovery__choices"},q.options.map((option,j)=>
+            h("button",{key:j,type:"button",disabled:correct,
+              className:"discovery__choice" + (hasSelected && selected===j ? (correct ? " is-correct":" is-wrong") : ""),
+              onClick:()=>selectAnswer(i,j)},option)
+          )),
+          hasSelected && h("p",{className:"discovery__feedback "+(correct?"is-correct":"is-wrong"),role:"status"},
+            correct ? "✓ Bien observé ! Tu peux poursuivre ton analyse." : "Pas encore. Indice : "+q.hint)
+        );
+      }),
+      h("div",{className:"discovery__actions"},
+        h("button",{type:"button",className:"discovery__button discovery__button--soft",onClick:()=>go("observe")},"← Revoir les exemples"),
+        h("button",{type:"button",className:"discovery__button",disabled:!allCorrect,onClick:()=>go("hypothesis",2)},"Formuler mon hypothèse →")
+      )
+    );
+  } else if (stage === "hypothesis") {
+    content = h("section",{className:"discovery__sheet","aria-labelledby":"hypothesis-heading"},
+      h("span",{className:"discovery__topline"},"ÉTAPE 3 · HYPOTHÈSE"),
+      h("h3",{className:"discovery__title",id:"hypothesis-heading"},"Your turn, detective! 💡"),
+      h("p",{className:"discovery__lead"},"Tu as observé des exemples et repéré des régularités. À toi de proposer la règle, avec tes propres mots. Ta proposition ne sera pas notée."),
+      h("p",{className:"discovery__notice"},lesson.hypothesis),
+      h("form",{onSubmit:submitHypothesis},
+        h("label",{htmlFor:"discovery-hypothesis",className:"discovery__lead"},"Mon hypothèse :"),
+        h("textarea",{id:"discovery-hypothesis",className:"discovery__textarea",value:hypothesis,
+          placeholder:"Je remarque que... Je pense que l'on utilise cette forme quand...",
+          maxLength:1200,rows:5,
+          onChange:e=>{setHypothesis(e.target.value);setHypothesisError("");}}),
+        h("p",{className:"discovery__hypothesis-sample"},"Écris une phrase personnelle, même si tu n'es pas sûr(e). Tu pourras la comparer à la règle juste après."),
+        hypothesisError && h("p",{className:"discovery__alert",role:"alert"},hypothesisError),
+        h("div",{className:"discovery__actions"},
+          h("button",{type:"button",className:"discovery__button discovery__button--soft",onClick:()=>go("compare")},"← Revoir mes réponses"),
+          h("button",{type:"submit",className:"discovery__button discovery__button--green"},"Comparer mon idée à la règle →")
+        )
+      )
+    );
+  } else if (stage === "rule") {
+    content = h("section",{className:"discovery__sheet","aria-labelledby":"rule-heading"},
+      h("span",{className:"discovery__topline"},"ÉTAPE 4 · INSTITUTIONNALISATION"),
+      h("h3",{className:"discovery__title",id:"rule-heading"},"You've got the idea! 📖"),
+      h("div",{className:"discovery__reflection"},
+        h("h3",null,"Mon hypothèse"),
+        h("blockquote",null,hypothesis),
+        h("p",null,"Compare maintenant ton idée avec la règle. Qu'avais-tu bien repéré ? Que faudrait-il préciser ?")
+      ),
+      h("div",{className:"discovery__rule-head"},h("h3",null,"La règle à retenir")),
+      h("div",{className:"rule-box"},code.rule.split(String.fromCharCode(10)).map((line,i)=>
+        line.trim()==="" ? h("br",{key:i}) : h("p",{key:i},line)
+      )),
+      code.pitfalls && h(React.Fragment,null,
+        h("h3",{className:"section-title"},"Pièges fréquents"),
+        h("ul",{className:"pitfalls"},code.pitfalls.map((p,i)=>h("li",{key:i},p)))
+      ),
+      h("h3",{className:"section-title"},"Exemples corrigés"),
+      h("div",{className:"examples"},code.examples.map((ex,i)=>
+        h("div",{className:"example",key:i},
+          h("p",{className:"example__wrong"},h("span",{className:"tag tag--wrong"},"✗")," ",ex.wrong),
+          h("p",{className:"example__right"},h("span",{className:"tag tag--right"},"✓")," ",ex.right),
+          ex.note && h("p",{className:"example__note"},ex.note)
+        )
+      )),
+      h("div",{className:"discovery__actions"},
+        h("button",{type:"button",className:"discovery__button discovery__button--soft",onClick:()=>go("hypothesis")},"← Modifier mon hypothèse"),
+        h("button",{type:"button",className:"discovery__button",onClick:()=>go("check",4)},"✏️ Corriger des phrases"),
+        h("button",{type:"button",className:"discovery__button discovery__button--green",onClick:()=>go("quiz",4)},"🎯 Faire le quiz")
+      )
+    );
+  } else {
+    const isQuiz=stage==="quiz";
+    content = h("section",{className:"discovery__sheet","aria-labelledby":"practice-heading"},
+      h("span",{className:"discovery__topline"},"ÉTAPE 5 · RÉINVESTISSEMENT"),
+      h("h3",{className:"discovery__title",id:"practice-heading"},"Practise & improve! ✏️"),
+      h("div",{className:"discovery__practice"},
+        h("h3",null,"Mets ta découverte à l'épreuve"),
+        h("p",null,"Tu as formulé ton hypothèse et découvert la règle. Entraîne-toi maintenant avec les exercices de la fiche d'origine.")
+      ),
+      h("div",{className:"discovery__practice-selector","aria-label":"Choisir un exercice"},
+        h("button",{type:"button",className:isQuiz?"is-selected":"",onClick:()=>go("quiz"),"aria-pressed":isQuiz},"🎯 Quiz"),
+        h("button",{type:"button",className:!isQuiz?"is-selected":"",onClick:()=>go("check"),"aria-pressed":!isQuiz},"✏️ Corrige la phrase")
+      ),
+      isQuiz ? h(Quiz,{quiz:code.quiz,key:"quiz-"+code.id}) : h(CorrectionExercise,{code,key:"check-"+code.id}),
+      h("div",{className:"discovery__actions"},
+        h("button",{type:"button",className:"discovery__button discovery__button--soft",onClick:()=>go("rule")},"← Revoir la règle")
+      )
+    );
+  }
+  return h("div",{className:"detail discovery"},
+    backButton,header,introduction,steps,content
+  );
 }
 function FontLoader() {
   useEffect(() => {
