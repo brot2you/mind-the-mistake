@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="pop-v2.css?v=4">
 <link rel="stylesheet" href="inductive-v1.css?v=2">
+<link rel="stylesheet" href="rewards-v1.css?v=1">
+<script src="rewards-v1.js?v=1"></script>
 <script src="inductive-v1.js?v=1"></script>
 <style>
   html, body { margin: 0; padding: 0; }
@@ -1708,7 +1710,7 @@ function CodeCard({ code, onSelect }) {
     )
   );
 }
-function Quiz({ quiz }) {
+function Quiz({ quiz, codeId }) {
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState(null);
   const [score, setScore] = useState(0);
@@ -1728,6 +1730,10 @@ function Quiz({ quiz }) {
       setAnswered(false);
     } else {
       setFinished(true);
+      if (window.MTM_BADGES && codeId) {
+        window.MTM_BADGES.record("quiz", codeId);
+        if (score === quiz.length) window.MTM_BADGES.record("perfect", codeId);
+      }
     }
   }
   function handleRestart() {
@@ -1800,6 +1806,10 @@ function CorrectionExercise({ code }) {
       setIsCorrect(false);
     } else {
       setDone(true);
+      if (window.MTM_BADGES) {
+        window.MTM_BADGES.record("fix", code.id);
+        if (score === items.length) window.MTM_BADGES.record("fixperfect", code.id);
+      }
     }
   }
   function handleRestart() {
@@ -1872,6 +1882,7 @@ function CodeDetail({ code, onBack }) {
       return;
     }
     setHypothesisError("");
+    if (window.MTM_BADGES) window.MTM_BADGES.record("discover", code.id);
     go("rule", 3);
   }
   if (!lesson) {
@@ -2008,7 +2019,7 @@ function CodeDetail({ code, onBack }) {
         h("button",{type:"button",className:isQuiz?"is-selected":"",onClick:()=>go("quiz"),"aria-pressed":isQuiz},"🎯 Quiz"),
         h("button",{type:"button",className:!isQuiz?"is-selected":"",onClick:()=>go("check"),"aria-pressed":!isQuiz},"✏️ Corrige la phrase")
       ),
-      isQuiz ? h(Quiz,{quiz:code.quiz,key:"quiz-"+code.id}) : h(CorrectionExercise,{code,key:"check-"+code.id}),
+      isQuiz ? h(Quiz,{quiz:code.quiz,codeId:code.id,key:"quiz-"+code.id}) : h(CorrectionExercise,{code,key:"check-"+code.id}),
       h("div",{className:"discovery__actions"},
         h("button",{type:"button",className:"discovery__button discovery__button--soft",onClick:()=>go("rule")},"← Revoir la règle")
       )
@@ -2030,12 +2041,40 @@ function FontLoader() {
   }, []);
   return null;
 }
+function RewardsPassport({ onClose }) {
+  const h = React.createElement;
+  const data = window.MTM_BADGES ? window.MTM_BADGES.snapshot() : {badges:[],counts:{}};
+  const won = data.badges.filter(x=>x.unlocked).length;
+  return h("section",{className:"rewards","aria-label":"Passeport de récompenses"},
+    h("div",{className:"rewards__head"},
+      h("div",null,h("h2",{className:"rewards__title"},"🏅 Mon passeport de badges"),
+        h("p",{className:"rewards__subtitle"},won," / ",data.badges.length," badges gagnés · Récompenses enregistrées sur cet appareil")),
+      h("button",{className:"rewards__close",type:"button",onClick:onClose},"Fermer ✕")
+    ),
+    h("div",{className:"rewards__grid"},data.badges.map(b=>
+      h("div",{key:b.id,className:"reward"+(b.unlocked?" is-earned":"")},
+        h("span",{className:"reward__coin","aria-hidden":"true"},b.unlocked?b.icon:"🔒"),
+        h("span",{className:"reward__title"},b.title),
+        h("span",{className:"reward__desc"},b.desc),
+        h("span",{className:"reward__progress"},b.unlocked?"✓ Débloqué":b.current+" / "+b.need)
+      )
+    ))
+  );
+}
 function App() {
   const h = React.createElement;
   const [selectedId, setSelectedId] = useState(null);
   const [entry, setEntry] = useState("");
   const [entryError, setEntryError] = useState("");
   const [filter, setFilter] = useState("");
+  const [showRewards,setShowRewards] = useState(false);
+  const [rewardChange,setRewardChange] = useState(0);
+  const [toast,setToast] = useState("");
+  useEffect(()=>{
+    const fn=e=>{setRewardChange(v=>v+1);if(e.detail && e.detail.newly && e.detail.newly.length){const gained=window.MTM_BADGES.BADGES.filter(b=>e.detail.newly.includes(b.id));setToast("🏅 Nouveau badge : "+gained.map(b=>b.title).join(", "));}};
+    window.addEventListener("mtm-rewards",fn);
+    return ()=>window.removeEventListener("mtm-rewards",fn);
+  },[]);
   const selectedCode = CODES.find((c) => c.id === selectedId);
   function openCode(id) {
     setSelectedId(id);
@@ -2069,7 +2108,10 @@ function App() {
             h("p", { className: "brand__tagline" }, "by Brot2You · English")
           )
         ),
-        h("div", { className: "header__mini" }, h("strong", null, "22"), " codes à explorer ", h("span", { "aria-hidden": "true" }, "✦"))
+        h("div",{className:"reward-nav"},
+          h("button",{type:"button",className:"reward-open",onClick:()=>{setShowRewards(v=>!v);setSelectedId(null);window.scrollTo({top:0,behavior:"smooth"});}},"🏅 Mes badges ",window.MTM_BADGES ? window.MTM_BADGES.snapshot().badges.filter(b=>b.unlocked).length : 0,"/12"),
+          h("div", { className: "header__mini" }, h("strong", null, "22"), " codes à explorer ", h("span", { "aria-hidden": "true" }, "✦"))
+        )
       ),
       !selectedCode && h("div", { className: "hero" },
         h("div", { className: "hero__copy" },
@@ -2100,6 +2142,8 @@ function App() {
       )
     ),
     h("main", { className: "main" },
+      toast && h("div",{className:"rewards__toast",role:"status"},toast,h("button",{type:"button",onClick:()=>setToast("")},"✕")),
+      showRewards && h(RewardsPassport,{key:"passport-"+rewardChange,onClose:()=>setShowRewards(false)}),
       !selectedCode ? h(React.Fragment, null,
         h("section", { className: "catalog", "aria-label": "Les 22 codes de correction" },
           h("div", { className: "catalog__heading" },
