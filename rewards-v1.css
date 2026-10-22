@@ -1,0 +1,23 @@
+/* Brot2You — rewards passport */
+.app .reward-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.app .reward-open{border:2px solid #e5ca8b;border-radius:99px;background:#f2e8cb;color:#785329;padding:10px 14px;font:900 .84rem 'Nunito',sans-serif;cursor:pointer;white-space:nowrap}
+.app .reward-open:hover{background:#ece0b9}
+.app .rewards{padding:19px 21px;margin:0 0 25px;border:2px solid #dbcfae;border-radius:22px;background:linear-gradient(130deg,#f1eee2,#e9e9e6);box-shadow:0 8px 0 #d8dedf}
+.app .rewards__head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:16px}
+.app .rewards__title{font:700 1.6rem 'Fredoka',sans-serif;color:#38506f;margin:0}
+.app .rewards__subtitle{margin:4px 0 0;color:#727d89;font-weight:800;font-size:.83rem}
+.app .rewards__close{border:2px solid #d5dee4;border-radius:11px;background:#e7eced;color:#38567d;font-weight:900;padding:9px 13px;cursor:pointer}
+.app .rewards__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.app .reward{padding:15px 12px 13px;text-align:center;border-radius:17px;border:2px solid #d4dfdf;background:#ebeeea;display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0}
+.app .reward.is-earned{background:linear-gradient(145deg,#fff0c7,#e6ede4);border-color:#d7b864;box-shadow:inset 0 0 0 2px #f8f0d8}
+.app .reward__coin{width:73px;height:73px;border-radius:50%;display:grid;place-items:center;font-size:2.15rem;background:linear-gradient(145deg,#d9e0e4,#c5ced7);border:5px solid #d6dde1;box-shadow:0 5px 0 #b7c2ce;filter:grayscale(1);opacity:.7}
+.app .reward.is-earned .reward__coin{background:radial-gradient(circle at 30% 25%,#fff4b6,#ebbb54 70%,#b98d3b);border-color:#f6dd95;box-shadow:0 5px 0 #c29e5f;filter:none;opacity:1;animation:reward-shine 3s ease-in-out infinite}
+.app .reward__title{font:700 .95rem/1.25 'Fredoka',sans-serif;color:#455d79}
+.app .reward__desc{font:800 .73rem/1.35 'Nunito',sans-serif;color:#728395;min-height:32px}
+.app .reward__progress{font:900 .77rem 'Nunito',sans-serif;color:#887749}
+.app .rewards__toast{margin:0 0 18px;padding:15px 17px;background:#f7ebca;border:2px solid #d6b467;border-radius:15px;color:#675333;font:900 .96rem/1.4 'Nunito',sans-serif;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 6px 0 #e1dccf}
+.app .rewards__toast button{border:0;background:#e0c780;border-radius:10px;padding:8px 10px;cursor:pointer;font-weight:900}
+@keyframes reward-shine{0%,100%{box-shadow:0 5px 0 #c29e5f}50%{box-shadow:0 5px 0 #c29e5f,0 0 19px rgba(244,196,75,.38)}}
+@media(max-width:800px){.app .rewards__grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:540px){.app .rewards{padding:13px}.app .rewards__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.app .reward{padding:11px 8px}.app .reward__coin{width:60px;height:60px;font-size:1.75rem}.app .reward-open{font-size:.72rem;padding:8px 10px}.app .header__mini{display:none}}
+@media(prefers-reduced-motion:reduce){.app .reward.is-earned .reward__coin{animation:none}}
