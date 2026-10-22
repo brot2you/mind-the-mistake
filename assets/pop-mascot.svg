@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="520" viewBox="0 0 500 520" role="img" aria-label="Petit héros souriant qui encourage à corriger les erreurs">
+<defs>
+ <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#77dcff"/><stop offset=".42" stop-color="#1988ee"/><stop offset="1" stop-color="#285ed9"/></linearGradient>
+ <linearGradient id="skin" x1=".15" y1="0" x2=".8" y2="1"><stop stop-color="#ffdbb0"/><stop offset=".7" stop-color="#ffbf91"/><stop offset="1" stop-color="#e89e76"/></linearGradient>
+ <linearGradient id="hair" x1=".15" y1="0" x2="1" y2=".9"><stop stop-color="#734032"/><stop offset=".42" stop-color="#432b31"/><stop offset="1" stop-color="#26273c"/></linearGradient>
+ <linearGradient id="yellow" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#fff195"/><stop offset="1" stop-color="#ffc733"/></linearGradient>
+ <filter id="shade" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="11" stdDeviation="10" flood-color="#2154a7" flood-opacity=".22"/></filter>
+ <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="8"/></filter>
+ </defs>
+ <ellipse cx="253" cy="473" rx="132" ry="22" fill="#2f7bcd" opacity=".13"/>
+ <g fill="#fff1a3" stroke="#ffc42e" stroke-width="5" stroke-linejoin="round">
+  <path d="M73 113l10 27 28 8-27 10-7 29-11-27-27-8 27-11z"/>
+  <path d="M404 84l7 21 22 6-22 9-6 22-9-21-21-7 21-7z"/>
+ </g>
+ <circle cx="447" cy="248" r="11" fill="#ff81bc"/><circle cx="74" cy="319" r="9" fill="#5be4b2"/>
+ <path d="M438 318l24-13M446 293l-2 33M53 255l14-14M61 232l13 16" stroke="#ffb426" stroke-width="7" stroke-linecap="round"/>
+ <g filter="url(#shade)" stroke="#43334f" stroke-width="7" stroke-linejoin="round" stroke-linecap="round">
+  <!-- backpack & body -->
+  <path d="M143 362q-31-11-36 21l1 49q0 31 47 32l22-64z" fill="#ff6f86"/>
+  <path d="M177 334q68-33 150 5 39 23 54 100l-29 27-186-4-33-41q13-61 44-87z" fill="url(#blue)"/>
+  <path d="M205 348q40 15 84 1l-9 86-58 11z" fill="#fff5cc" stroke-width="4"/>
+  <path d="M215 374q26 19 56 1" fill="none" stroke="#ec9d34" stroke-width="5"/>
+  <path d="M193 366q-17 28-8 73" fill="none" stroke="#98eeff" stroke-width="7"/>
+  <path d="M330 358q23 34 20 70" fill="none" stroke="#8fddff" stroke-width="7"/>
+  <!-- right arm pointing up -->
+  <path d="M338 344q37-15 60-55l32-4 22 33q-21 66-74 92l-38-17z" fill="url(#blue)"/>
+  <path d="M402 284q-3-21 10-40 12-17 24-13 11 5 6 22l-5 15q37-18 44 4 5 11-3 20 14 16-3 27-5 23-26 30-36 9-56-24z" fill="url(#skin)"/>
+  <path d="M441 269q-6 9-4 26" stroke="#da8c74" fill="none" stroke-width="4"/>
+  <!-- left arm with pencil -->
+  <path d="M171 359q-36 8-54 44l26 34q30-4 68-42z" fill="url(#blue)"/>
+  <path d="M135 408q-19-15-33-3-13 13-4 28 14 23 40 10l13-18z" fill="url(#skin)"/>
+  <g transform="rotate(-34 112 417)" stroke-width="4">
+   <rect x="104" y="371" width="17" height="63" rx="6" fill="url(#yellow)"/>
+   <path d="M104 371l8-19 9 19z" fill="#ffd9a8"/><path d="M109 359l3-7 4 7z" fill="#40354c"/>
+   <rect x="104" y="406" width="17" height="10" fill="#ff719b"/>
+  </g>
+  <!-- hair behind -->
+  <path d="M140 202q-34-103 47-146 82-50 161 15 61 54 36 143l-25 77-197-11z" fill="url(#hair)"/>
+  <!-- ears -->
+  <ellipse cx="139" cy="250" rx="23" ry="31" fill="url(#skin)"/>
+  <ellipse cx="373" cy="243" rx="23" ry="30" fill="url(#skin)"/>
+  <!-- neck -->
+  <path d="M211 299h95l-9 61q-35 27-70 1z" fill="url(#skin)"/>
+  <!-- face -->
+  <path d="M153 159q-18 41-9 107 11 78 102 86 99 11 118-84l2-107q-111-59-213-2z" fill="url(#skin)"/>
+  <path d="M165 157q-20 17-24 39-24-41-3-88 17-49 68-56 48-37 100 3 59-5 74 61 8 30-8 69l-13-20q-27-2-52-30-30 33-73 29l14-22q-35 26-80 15z" fill="url(#hair)"/>
+  <path d="M172 129q-7-24 21-48M263 87q23-21 59 2" stroke="#a96955" fill="none" stroke-width="8"/>
+  <!-- eyes -->
+  <ellipse cx="204" cy="246" rx="17" ry="26" fill="#292b3b" stroke="none"/>
+  <ellipse cx="307" cy="246" rx="17" ry="26" fill="#292b3b" stroke="none"/>
+  <ellipse cx="199" cy="237" rx="6" ry="10" fill="white" stroke="none"/>
+  <ellipse cx="303" cy="237" rx="6" ry="10" fill="white" stroke="none"/>
+  <path d="M185 210q19-8 35 1M291 210q21-10 36-1" stroke="#583c42" fill="none" stroke-width="6"/>
+  <ellipse cx="176" cy="285" rx="26" ry="11" fill="#ff7798" opacity=".57" stroke="none"/>
+  <ellipse cx="338" cy="285" rx="26" ry="11" fill="#ff7798" opacity=".57" stroke="none"/>
+  <path d="M218 288q36 47 78 0-29 9-78 0z" fill="#7d2945" stroke="#6f3048" stroke-width="5"/>
+  <path d="M230 293q26 10 52 0" fill="none" stroke="white" stroke-width="9"/>
+  <path d="M249 281q8 5 15 0" fill="none" stroke="#d7886e" stroke-width="4"/>
+  <!-- hoodie -->
+  <path d="M206 335l-13 20 28 35 20-22M313 331l15 26-33 34-18-24" fill="#5dc8ff"/>
+  <path d="M245 361l-3 52M276 359l2 48" stroke="#fff3e5" stroke-width="5"/>
+ </g>
+ <g transform="translate(93 450) rotate(-8)">
+   <rect width="98" height="42" rx="18" fill="#ffdb4f" stroke="#ecb42f" stroke-width="4"/>
+   <text x="49" y="27" text-anchor="middle" font-size="20" font-weight="900" fill="#473163" font-family="Arial,sans-serif">YOU GOT IT!</text>
+ </g>
+ </svg>
