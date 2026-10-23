@@ -31,3 +31,40 @@
 @keyframes reward-png-glow{0%,100%{filter:drop-shadow(0 4px 5px rgba(135,91,25,.21)) brightness(1)}50%{filter:drop-shadow(0 0 11px rgba(245,191,59,.48)) brightness(1.1)}}
 @media(max-width:540px){.app .reward__coin{width:89px;height:89px}}
 @media(prefers-reduced-motion:reduce){.app .reward.is-earned .reward__image{animation:none}}
+
+/* Clear, consistent homepage call-to-action for reward passport */
+.app .rewards-home-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: auto;
+  max-width: 100%;
+  min-height: 54px;
+  margin: 2px 0 26px;
+  padding: 14px 23px;
+  border: 2px solid #d3a957;
+  border-radius: 17px;
+  background: linear-gradient(135deg,#f6e8b7,#ebd9a3);
+  color: #594a34;
+  font-family: 'Fredoka','Nunito',sans-serif;
+  font-weight: 600;
+  font-size: 1.09rem;
+  line-height: 1.25;
+  letter-spacing: .01em;
+  text-align: center;
+  box-shadow: 0 5px 0 #c5b58f, 0 9px 18px rgba(103,85,42,.12);
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.app .rewards-home-button:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg,#fff0c5,#f1dc9e);
+}
+.app .rewards-home-button:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #c5b58f;
+}
+@media (max-width: 540px) {
+  .app .rewards-home-button {width:100%;margin: 0 0 21px;padding: 13px 14px;font-size: 1rem;}
+}
