@@ -2058,7 +2058,7 @@ function RewardsPassport({ onClose }) {
     h("div",{className:"rewards__grid"},data.badges.map(b=>
       h("div",{key:b.id,className:"reward"+(b.unlocked?" is-earned":"")},
         h("span",{className:"reward__coin","aria-hidden":"true"},
-          h("img",{className:"reward__image",src:"assets/badges/"+b.id+".png",alt:"",loading:"lazy",decoding:"async"}),
+          h("img",{className:"reward__image",src:"assets/badges/"+b.id+".png",alt:"",loading:"eager",decoding:"async",width:104,height:104}),
           !b.unlocked && h("span",{className:"reward__lock"},"🔒")
         ),
         h("span",{className:"reward__title"},b.title),
@@ -2077,6 +2077,20 @@ function App() {
   const [family,setFamily]=useState("all");
   const [teacherMode,setTeacherMode]=useState(false);
   const [showRewards,setShowRewards] = useState(false);
+  useEffect(()=>{
+    // Preload one medal at a time after initial paint: fewer long image delays on first open.
+    let stop=false, timer=0, cursor=0;
+    const ids=["spark","curious","scientist","explorer","starter","brave","champion","star","eraser","master","perfectfix","legend"];
+    function next(){
+      if(stop||cursor>=ids.length)return;
+      const img=new Image();
+      img.onload=img.onerror=()=>{if(!stop)timer=setTimeout(next,90);};
+      img.src="assets/badges/"+ids[cursor++]+".png";
+    }
+    timer=setTimeout(next,900);
+    return()=>{stop=true;clearTimeout(timer);};
+  },[]);
+
   const [rewardChange,setRewardChange] = useState(0);
   const [toast,setToast] = useState("");
   useEffect(()=>{
@@ -2086,6 +2100,7 @@ function App() {
   },[]);
   const selectedCode = CODES.find((c) => c.id === selectedId);
   function openCode(id) {
+    setShowRewards(false);
     setSelectedId(id);
     setEntryError("");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -2152,7 +2167,7 @@ function App() {
     ),
     h("main", { className: "main" },
       toast && h("div",{className:"rewards__toast",role:"status"},toast,h("button",{type:"button",onClick:()=>setToast("")},"✕")),
-      showRewards && h(RewardsPassport,{key:"passport-"+rewardChange,onClose:()=>setShowRewards(false)}),
+      showRewards && !selectedCode && h(RewardsPassport,{key:"passport-"+rewardChange,onClose:()=>setShowRewards(false)}),
       !selectedCode ? h(React.Fragment, null,
         h("button",{type:"button",className:"rewards-home-button",onClick:()=>{setShowRewards(v=>!v);window.scrollTo({top:0,behavior:"smooth"});}},"🏆 ",showRewards?"Masquer mes badges":"Voir mes badges et récompenses","  →"),
         h("section", { className: "catalog", "aria-label": "Les 40 codes de correction" },
