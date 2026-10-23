@@ -1,0 +1,24 @@
+/* V8 — 40 codes, four families, quick-reference teacher tools */
+.app .family-filter{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:0 0 21px}
+.app .family-filter__btn{border:2px solid #d4dfe4;border-radius:99px;background:#eaf0ee;color:#476480;font:900 .82rem/1.35 'Nunito',sans-serif;padding:10px 14px;cursor:pointer;transition:transform .16s,background .16s}
+.app .family-filter__btn:hover{transform:translateY(-2px);background:#e1eced}
+.app .family-filter__btn.is-active{background:#486cc1;border-color:#486cc1;color:#fff;box-shadow:0 4px 0 #becae2}
+.app .teacher-tools{margin:0 0 22px}
+.app .teacher-tools__toggle{border-radius:13px;padding:12px 16px;border:2px solid #d3dfe1;background:#f1eee4;color:#466481;font:900 .85rem 'Nunito',sans-serif;cursor:pointer}
+.app .teacher-tools__toggle:hover{background:#e7e5dd}
+.app .teacher-tools__panel{border:2px solid #d6e0e4;border-radius:17px;background:#f2f2ed;padding:18px;margin-top:11px}
+.app .teacher-tools__panel p{font:800 .89rem/1.5 'Nunito',sans-serif;color:#526a85;margin:0 0 8px}
+.app .teacher-tools__panel>button{padding:10px 14px;border:none;border-radius:11px;background:#426fbd;color:#fff;cursor:pointer;font-weight:900;margin:8px 0 12px}
+.app .teacher-tools__list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.app .teacher-tools__list>div{display:flex;align-items:center;gap:9px;padding:8px 9px;border:1px solid #dbe3e2;background:#ecefed;border-radius:9px;color:#384d6d;font-size:.8rem;min-width:0}
+.app .teacher-tools__list b{background:#5b83c8;color:#fff;padding:5px 7px;border-radius:7px;font-weight:900}
+.app .teacher-tools__list span{min-width:0;flex:1}
+.app .teacher-tools__list small{color:#748398;font-weight:800}
+@media(max-width:540px){.app .family-filter{gap:6px}.app .family-filter__btn{padding:9px 10px;font-size:.74rem}.app .teacher-tools__list{grid-template-columns:1fr}}
+@media print{
+ .app .header,.app .hero,.app .pop-path,.app .rewards-home-button,.app .catalog__filter,.app .family-filter,.app .grid,.app .footer,.app .teacher-tools__toggle{display:none!important}
+ .app .main{max-width:100%;margin:0;padding:0}
+ .app .teacher-tools__panel{border:none;padding:0;background:white}
+ .app .teacher-tools__panel>button{display:none}
+ .app .teacher-tools__list{grid-template-columns:repeat(2,minmax(0,1fr));gap:3px}
+}
