@@ -21,3 +21,13 @@
 @media(max-width:800px){.app .rewards__grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:540px){.app .rewards{padding:13px}.app .rewards__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.app .reward{padding:11px 8px}.app .reward__coin{width:60px;height:60px;font-size:1.75rem}.app .reward-open{font-size:.72rem;padding:8px 10px}.app .header__mini{display:none}}
 @media(prefers-reduced-motion:reduce){.app .reward.is-earned .reward__coin{animation:none}}
+
+/* Premium illustrated PNG medals (assets/badges) */
+.app .reward__coin{position:relative;isolation:isolate;width:104px;height:104px;border:0;background:transparent;box-shadow:none;filter:none;opacity:1;overflow:visible}
+.app .reward__image{width:100%;height:100%;object-fit:contain;display:block;filter:grayscale(1) saturate(.3);opacity:.5;transform:scale(.92);transition:filter .25s,opacity .25s,transform .25s}
+.app .reward.is-earned .reward__coin{border:0;background:transparent;box-shadow:none;animation:none;filter:none;opacity:1}
+.app .reward.is-earned .reward__image{filter:drop-shadow(0 4px 5px rgba(135,91,25,.23));opacity:1;transform:scale(1);animation:reward-png-glow 3.5s ease-in-out infinite}
+.app .reward__lock{position:absolute;z-index:2;bottom:4px;right:4px;display:grid;place-items:center;width:29px;height:29px;border-radius:50%;background:#e5e9eb;border:2px solid #ced6dd;font-size:14px;box-shadow:0 2px 4px rgba(26,55,80,.13)}
+@keyframes reward-png-glow{0%,100%{filter:drop-shadow(0 4px 5px rgba(135,91,25,.21)) brightness(1)}50%{filter:drop-shadow(0 0 11px rgba(245,191,59,.48)) brightness(1.1)}}
+@media(max-width:540px){.app .reward__coin{width:89px;height:89px}}
+@media(prefers-reduced-motion:reduce){.app .reward.is-earned .reward__image{animation:none}}
