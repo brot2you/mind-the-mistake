@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="rewards-v1.css?v=2">
 <script src="rewards-v1.js?v=1"></script>
 <script src="inductive-v1.js?v=1"></script>
+<script src="codes-23-40.js?v=1"></script>
+<link rel="stylesheet" href="families-v1.css?v=1">
 <style>
   html, body { margin: 0; padding: 0; }
   #root { min-height: 100vh; }
@@ -1691,6 +1693,8 @@ Expression courante : "by myself / by yourself..." = "tout seul, sans aide".`,
     ]
   }
 ];
+CODES.push(...(window.MTM_EXTRA_CODES || []));
+if(window.MTM_EXTRA_DISCOVERY)Object.assign(window.MTM_DISCOVERY,window.MTM_EXTRA_DISCOVERY);
 const CODE_ICONS = ["⏳", "🕰️", "⌛", "✨", "🚀", "⚡", "📰", "🧩", "🧭", "🔀", "🎯", "🧑‍🤝‍🧑", "🏆", "💬", "🔤", "✏️", "🔗", "🌦️", "🔄", "🧠", "🌍", "🪞"];
 function CodeCard({ code, onSelect }) {
   const h = React.createElement;
@@ -1889,7 +1893,7 @@ function CodeDetail({ code, onBack }) {
     return h("div", {className:"detail"}, h("button", {className:"back-link",onClick:onBack}, "← Retour"),
       h("p", null, "Cette fiche n'a pas encore son parcours de découverte. Réessaie plus tard."));
   }
-  const backButton = h("button", {className:"back-link",type:"button",onClick:onBack}, "← Retour aux 22 codes");
+  const backButton = h("button", {className:"back-link",type:"button",onClick:onBack}, "← Retour aux 40 codes");
   const header = h("div", {className:"detail__header"},
     h("span", {className:"detail__number"}, String(code.id).padStart(2,"0")),
     h("h2", {className:"detail__title"}, code.title)
@@ -2070,6 +2074,8 @@ function App() {
   const [entry, setEntry] = useState("");
   const [entryError, setEntryError] = useState("");
   const [filter, setFilter] = useState("");
+  const [family,setFamily]=useState("all");
+  const [teacherMode,setTeacherMode]=useState(false);
   const [showRewards,setShowRewards] = useState(false);
   const [rewardChange,setRewardChange] = useState(0);
   const [toast,setToast] = useState("");
@@ -2089,7 +2095,7 @@ function App() {
     if (entry.trim() && Number.isInteger(n) && CODES.some((c) => c.id === n)) {
       openCode(n);
     } else {
-      setEntryError("Entre un numéro de code entre 1 et 22.");
+      setEntryError("Entre un numéro de code entre 1 et 40.");
     }
   }
   function backHome() {
@@ -2097,7 +2103,7 @@ function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
   const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const filtered = CODES.filter(c => norm(c.title + " " + c.summary + " " + c.id).includes(norm(filter.trim())));
+  const filtered = CODES.filter(c => (family==="all" || (c.family || window.MTM_FAMILY_FOR_CODE[c.id])===family) && norm(c.title + " " + c.summary + " " + c.id).includes(norm(filter.trim())));
   const steps = [["🔎", "Observe"], ["🧩", "Compare"], ["💡", "Déduis"], ["📖", "Retiens"], ["✏️", "Pratique"]];
   return h("div", { className: "app" },
     h("style", null, STYLES),
@@ -2113,7 +2119,7 @@ function App() {
         ),
         h("div",{className:"reward-nav"},
           h("button",{type:"button",className:"reward-open",onClick:()=>{setShowRewards(v=>!v);setSelectedId(null);window.scrollTo({top:0,behavior:"smooth"});}},"🏅 Mes badges ",window.MTM_BADGES ? window.MTM_BADGES.snapshot().badges.filter(b=>b.unlocked).length : 0,"/12"),
-          h("div", { className: "header__mini" }, h("strong", null, "22"), " codes à explorer ", h("span", { "aria-hidden": "true" }, "✦"))
+          h("div", { className: "header__mini" }, h("strong", null, "40"), " codes à explorer ", h("span", { "aria-hidden": "true" }, "✦"))
         )
       ),
       !selectedCode && h("div", { className: "hero" },
@@ -2124,7 +2130,7 @@ function App() {
           h("div", { className: "hero__search" },
             h("span", { className: "hero__search-icon", "aria-hidden": "true" }, "🔎"),
             h("input", { className: "hero__input", type: "number", min: 1, max: 22,
-              inputMode: "numeric", value: entry, placeholder: "Numéro sur ta copie (1–22)",
+              inputMode: "numeric", value: entry, placeholder: "Numéro sur ta copie (1–40)",
               "aria-label": "Numéro du code inscrit sur la copie",
               onChange: (e) => {setEntry(e.target.value); setEntryError("");},
               onKeyDown: (e) => { if (e.key === "Enter") goToCode(); }
@@ -2132,7 +2138,7 @@ function App() {
             h("button", { className: "hero__go", type: "button", onClick: goToCode }, "C'est parti ➜")
           ),
           entryError && h("p", { className: "hero__error", role: "alert" }, entryError),
-          h("p", { className: "hero__hint" }, "Ou choisis ta fiche parmi les ", h("span", null, "22 codes"), " ci-dessous ↓")
+          h("p", { className: "hero__hint" }, "Ou choisis ta fiche parmi les ", h("span", null, "40 codes"), " ci-dessous ↓")
         ),
         h("div", { className: "hero__art" },
           h("img", { className: "hero__mascot", src: "assets/mind-the-mistake-chibi.webp?v=1", alt: "Mascotte chibi d’après la photo, avec lunettes et loupe" }),
@@ -2149,13 +2155,13 @@ function App() {
       showRewards && h(RewardsPassport,{key:"passport-"+rewardChange,onClose:()=>setShowRewards(false)}),
       !selectedCode ? h(React.Fragment, null,
         h("button",{type:"button",className:"rewards-home-button",onClick:()=>{setShowRewards(v=>!v);window.scrollTo({top:0,behavior:"smooth"});}},"🏆 ",showRewards?"Masquer mes badges":"Voir mes badges et récompenses","  →"),
-        h("section", { className: "catalog", "aria-label": "Les 22 codes de correction" },
+        h("section", { className: "catalog", "aria-label": "Les 40 codes de correction" },
           h("div", { className: "catalog__heading" },
             h("div", null,
               h("p", { className: "catalog__eyebrow" }, "Explore · Comprends · Réussis"),
               h("h2", { className: "catalog__title" }, "Choisis ton ", h("em", null, "code d'erreur"))
             ),
-            h("span", { className: "catalog__count" }, "📚 ", filtered.length, " / 22 fiches")
+            h("span", { className: "catalog__count" }, "📚 ", filtered.length, " / 40 fiches")
           ),
           h("div", { className: "catalog__filter" },
             h("label", { className: "catalog__filter-label" }, "🔍 ",
@@ -2163,6 +2169,24 @@ function App() {
                 placeholder: "Rechercher un code ou une règle...",
                 "aria-label": "Rechercher parmi les codes et les règles",
                 onChange: (e) => setFilter(e.target.value) })
+            )
+          ),
+          h("div",{className:"family-filter","aria-label":"Familles d'erreurs"},
+            window.MTM_FAMILIES.map(f=>h("button",{key:f.id,type:"button",
+              className:"family-filter__btn"+(family===f.id?" is-active":""),
+              onClick:()=>setFamily(f.id),"aria-pressed":family===f.id},f.icon," ",f.name,
+              " · ",f.id==="all"?40:CODES.filter(c=>(c.family||window.MTM_FAMILY_FOR_CODE[c.id])===f.id).length))
+          ),
+          h("div",{className:"teacher-tools"},
+            h("button",{type:"button",className:"teacher-tools__toggle",onClick:()=>setTeacherMode(v=>!v)},
+              teacherMode?"✕ Fermer l'espace professeur":"📋 Espace professeur : consulter les codes"),
+            teacherMode && h("div",{className:"teacher-tools__panel"},
+              h("p",null,"Codez les erreurs dans la marge de la copie. L'élève saisit son numéro dans l'application puis suit les cinq étapes inductives."),
+              h("p",null,"Les codes 01 à 22 sont conservés. Les codes 23 à 40 permettent un diagnostic plus précis."),
+              h("button",{type:"button",onClick:()=>window.print()},"🖨️ Imprimer la liste filtrée"),
+              h("div",{className:"teacher-tools__list"},filtered.map(c=>h("div",{key:c.id},
+                h("b",null,String(c.id).padStart(2,"0")),h("span",null,c.title),
+                h("small",null,c.level||"Collège"))))
             )
           ),
           filtered.length
