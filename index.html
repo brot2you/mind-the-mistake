@@ -2148,6 +2148,7 @@ function App() {
       toast && h("div",{className:"rewards__toast",role:"status"},toast,h("button",{type:"button",onClick:()=>setToast("")},"✕")),
       showRewards && h(RewardsPassport,{key:"passport-"+rewardChange,onClose:()=>setShowRewards(false)}),
       !selectedCode ? h(React.Fragment, null,
+        h("button",{type:"button",className:"rewards-home-button",onClick:()=>{setShowRewards(v=>!v);window.scrollTo({top:0,behavior:"smooth"});}},"🏆 ",showRewards?"Masquer mes badges":"Voir mes badges et récompenses","  →"),
         h("section", { className: "catalog", "aria-label": "Les 22 codes de correction" },
           h("div", { className: "catalog__heading" },
             h("div", null,
