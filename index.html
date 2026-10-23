@@ -2053,7 +2053,10 @@ function RewardsPassport({ onClose }) {
     ),
     h("div",{className:"rewards__grid"},data.badges.map(b=>
       h("div",{key:b.id,className:"reward"+(b.unlocked?" is-earned":"")},
-        h("span",{className:"reward__coin","aria-hidden":"true"},b.unlocked?b.icon:"🔒"),
+        h("span",{className:"reward__coin","aria-hidden":"true"},
+          h("img",{className:"reward__image",src:"assets/badges/"+b.id+".png",alt:"",loading:"lazy",decoding:"async"}),
+          !b.unlocked && h("span",{className:"reward__lock"},"🔒")
+        ),
         h("span",{className:"reward__title"},b.title),
         h("span",{className:"reward__desc"},b.desc),
         h("span",{className:"reward__progress"},b.unlocked?"✓ Débloqué":b.current+" / "+b.need)
